@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin review · MIGSTAR ENGAGER</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="dashboard-page admin-review-page">
+<header class="topbar">
+  <a class="brand" href="index.html"><span class="brand-mark">M✦</span><span>MIGSTAR <b>ENGAGER</b><small>Creators · Campaigns · Tasks</small></span></a>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="dashboard.html">Dashboard</a>
+  </nav>
+  <button class="outline" id="logoutBtn">Log out</button>
+</header>
+<main class="dashboard-main">
+  <section class="dashboard-welcome">
+    <div>
+      <span class="eyebrow">ADMIN REVIEW</span>
+      <h1>Moderation dashboard</h1>
+      <p>Review creator task submissions, payment requests, withdrawals, and engager answers from one place.</p>
+    </div>
+    <span class="badge">Staff</span>
+  </section>
+
+  <section id="adminAuth" class="panel">
+    <h2>Admin sign in</h2>
+    <form id="adminLoginForm" class="form">
+      <label>Username<input name="username" required></label>
+      <label>Password<input name="password" type="password" required></label>
+      <button class="button" type="submit">Open dashboard</button>
+    </form>
+    <p id="adminMessage" class="message" role="status"></p>
+  </section>
+
+  <section id="adminDashboard" hidden>
+    <p id="adminStatus" class="message admin-status" role="status" aria-live="polite"></p>
+    <div class="dashboard-summary">
+      <article class="panel summary-card">
+        <span class="eyebrow">CAMPAIGNS</span>
+        <strong id="campaignCount">0</strong>
+        <p>Pending review</p>
+      </article>
+      <article class="panel summary-card">
+        <span class="eyebrow">PAYMENTS</span>
+        <strong id="paymentCount">0</strong>
+        <p>Pending review</p>
+      </article>
+      <article class="panel summary-card">
+        <span class="eyebrow">WITHDRAWALS</span>
+        <strong id="withdrawalCount">0</strong>
+        <p>Waiting on review</p>
+      </article>
+      <article class="panel summary-card">
+        <span class="eyebrow">TASK ANSWERS</span>
+        <strong id="taskCount">0</strong>
+        <p>Submitted for review</p>
+      </article>
+    </div>
+
+    <div class="dashboard-content">
+      <article class="panel">
+        <div class="section-head">
+          <div><span class="eyebrow">CAMPAIGNS</span><h2>Review queue</h2></div>
+          <button class="outline" id="refreshCampaigns" data-refresh-queue="campaigns" type="button">Refresh</button>
+        </div>
+        <div id="campaignReviewList"></div>
+      </article>
+
+      <article class="panel">
+        <div class="section-head">
+          <div><span class="eyebrow">PAYMENTS</span><h2>Requests</h2></div>
+          <button class="outline" id="refreshPayments" data-refresh-queue="payments" type="button">Refresh</button>
+        </div>
+        <div id="paymentReviewList"></div>
+      </article>
+    </div>
+
+    <section class="panel">
+      <div class="section-head">
+        <div><span class="eyebrow">CAMPAIGN INVENTORY</span><h2>Approved campaigns</h2><p>Review active campaigns and remove any campaign with a notice to its creator.</p></div>
+        <button class="outline" id="refreshManagedCampaigns" type="button">Refresh</button>
+      </div>
+      <div id="managedCampaignList"></div>
+    </section>
+
+    <section class="panel admin-configuration" aria-label="Admin configuration">
+      <div class="section-head">
+        <div><span class="eyebrow">CAMPAIGN PRICING</span><h2>Budget packages</h2></div>
+      </div>
+      <form id="budgetForm" class="form admin-config-form">
+        <label>Platform<select name="platform" required><option value="YOUTUBE">YouTube</option><option value="FACEBOOK">Facebook</option><option value="INSTAGRAM">Instagram</option><option value="TIKTOK">TikTok</option></select></label>
+        <label>Objective<select name="objective" required><option value="FOLLOWERS">Followers</option><option value="VIEWERS">Views</option><option value="LIKES">Likes</option><option value="COMMENTS">Comments</option><option value="SUBSCRIBERS">Subscribers</option><option value="WEBSITE_VISITS">Website visits</option><option value="SURVEY">Survey/feedback</option><option value="QUIZ">Educational quiz</option><option value="REFERRALS">Legitimate referrals</option></select></label>
+        <label>Quantity<input name="quantity" type="number" min="1" value="50" required></label>
+        <label>Price (KSh)<input name="amount" type="number" min="0.01" step="0.01" required></label>
+        <label>Subscription validity (days)<input name="validity_days" type="number" min="1" value="30" required></label>
+        <button class="button" type="submit">Create package</button>
+      </form>
+      <p id="budgetMessage" class="message" role="status"></p>
+      <div id="budgetList" class="admin-config-list"></div>
+    </section>
+
+    <section class="panel admin-configuration">
+      <div class="section-head">
+        <div><span class="eyebrow">ENGAGER QUESTIONS</span><h2>Platform question pool</h2></div>
+      </div>
+      <form id="questionForm" class="form admin-config-form">
+        <label>Platform<select name="platform" required><option value="YOUTUBE">YouTube</option><option value="FACEBOOK">Facebook</option><option value="INSTAGRAM">Instagram</option><option value="TIKTOK">TikTok</option></select></label>
+        <label>Question<input name="question" maxlength="500" required placeholder="What key point was made in the video?"></label>
+        <button class="button" type="submit">Add question</button>
+      </form>
+      <p id="questionMessage" class="message" role="status"></p>
+      <div id="questionList" class="admin-config-list"></div>
+    </section>
+
+    <section id="superuserConfiguration" class="panel admin-configuration" hidden>
+      <div class="section-head">
+        <div><span class="eyebrow">SUPERUSER ONLY</span><h2>Platform fees, withdrawal & engager levels</h2></div>
+      </div>
+      <form id="settingsForm" class="form admin-config-form">
+        <label>Creator activation fee (KSh)<input name="creator_activation_fee" type="number" min="0" step="0.01" required></label>
+        <label>Free campaign trials per creator<input name="free_campaign_slots" type="number" min="0" step="1" required></label>
+        <label>Minimum withdrawal request (KSh)<input name="withdrawal_threshold" type="number" min="0.01" step="0.01" required></label>
+        <label>Default payment instructions<textarea name="payment_instructions" rows="3"></textarea></label>
+        <button class="button" type="submit">Save platform settings</button>
+      </form>
+      <p id="settingsMessage" class="message" role="status"></p>
+      <h3>Engager levels</h3>
+      <form id="levelForm" class="form admin-config-form">
+        <label>Name<input name="name" maxlength="40" required></label>
+        <label>Fee (KSh)<input name="fee" type="number" min="0.01" step="0.01" required></label>
+        <label>Daily sample earning<input name="sample_daily_earning" type="number" min="0" step="0.01" value="0"></label>
+        <label>30-day sample earning<input name="sample_30_day_earning" type="number" min="0" step="0.01" value="0"></label>
+        <label>60-day sample earning<input name="sample_60_day_earning" type="number" min="0" step="0.01" value="0"></label>
+        <label>Description<textarea name="description" rows="2"></textarea></label>
+        <button class="button" type="submit">Create level</button>
+      </form>
+      <p id="levelMessage" class="message" role="status"></p>
+      <div id="adminLevelList" class="admin-config-list"></div>
+    </section>
+
+    <div class="dashboard-content">
+      <article class="panel">
+        <div class="section-head">
+          <div><span class="eyebrow">WITHDRAWALS</span><h2>Payout review</h2></div>
+          <button class="outline" id="refreshWithdrawals" data-refresh-queue="withdrawals" type="button">Refresh</button>
+        </div>
+        <div id="withdrawalReviewList"></div>
+      </article>
+
+      <article class="panel">
+        <div class="section-head">
+          <div><span class="eyebrow">TASK ANSWERS</span><h2>Evaluation queue</h2></div>
+          <button class="outline" id="refreshTasks" data-refresh-queue="task-answers" type="button">Refresh</button>
+        </div>
+        <div id="taskReviewList"></div>
+      </article>
+    </div>
+  </section>
+</main>
+<footer><div class="brand"><span class="brand-mark">M✦</span><span>MIGSTAR <b>ENGAGER</b><small>Built for discovery and participation</small></span></div><p>Review only approved workflows and approved content. Keep each decision concise and auditable.</p></footer>
+<script src="admin-dashboard.js"></script>
+</body>
+</html>

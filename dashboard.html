@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My dashboard · MIGSTAR ENGAGER</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="dashboard-page">
+<header class="topbar">
+  <a class="brand" href="index.html"><span class="brand-mark">M✦</span><span>MIGSTAR <b>ENGAGER</b><small>Creators · Campaigns · Tasks</small></span></a>
+  <nav><a href="#campaigns" data-feature="campaigns">Campaigns</a><a href="#campaign-pricing" data-role="CREATOR">Campaign prices</a></nav>
+  <button class="outline" id="logoutBtn">Log out</button>
+</header>
+<main class="dashboard-main">
+  <section class="dashboard-welcome">
+    <div><span class="eyebrow">YOUR WORKSPACE</span><h1 id="userGreeting">Loading your dashboard…</h1><p id="roleSwitchHint">Manage your creator and engager activities from one place.</p></div>
+    <div class="dashboard-role-controls"><button class="outline" id="switchRoleBtn" type="button" hidden>Switch to …</button><span class="badge">Prototype</span></div>
+  </section>
+  <section class="dashboard-summary" aria-label="Account summary">
+    <article class="panel balance"><span>Ledger balance</span><strong id="balance">KSh —</strong><small>Your wallet balance.</small></article>
+    <article class="panel summary-card"><span class="eyebrow">CREATOR</span><strong id="creatorStatus">Loading</strong><p id="creatorSummary">Checking account status…</p></article>
+    <article class="panel summary-card"><span class="eyebrow">ENGAGER</span><strong id="engagerStatus">Loading</strong><p id="engagerSummary">Checking account status…</p></article>
+  </section>
+  <section id="campaigns" class="section dashboard-campaigns" data-feature="campaigns">
+    <div class="section-head"><div><span class="eyebrow">DISCOVER</span><h2>Campaigns</h2><p data-role="CREATOR">Pay the one-time creator activation fee, then use your free campaign trials. Campaign packages are charged after the trials are used.</p></div><button class="outline" id="refreshCampaigns">Refresh</button></div>
+    <div id="campaignList" class="campaign-grid"><p class="muted">Loading campaigns…</p></div>
+  </section>
+  <section id="campaign-pricing" class="section dashboard-campaigns" data-role="CREATOR" hidden>
+    <div class="section-head"><div><span class="eyebrow">ADMIN-CONFIGURED</span><h2>Campaign packages</h2></div><p>Your available free trial applies to these packages first. After your trials, paid package prices and durations are set by the admin.</p></div>
+    <div id="campaignBudgetList" class="level-grid"><p class="muted">Loading campaign packages…</p></div>
+  </section>
+  <section class="dashboard-content">
+    <article class="panel dashboard-actions">
+      <div class="section-head"><div><span class="eyebrow">NEXT STEPS</span><h2>Your actions</h2></div></div>
+      <div class="action-list">
+        <button class="action" id="paymentRequestsBtn">View payment requests <span>→</span></button>
+        <button class="action" id="creatorPaymentBtn" hidden>Request creator activation <span>→</span></button>
+        <button class="action" id="levelPaymentBtn" hidden>Request engager level activation <span>→</span></button>
+        <button class="action" id="campaignFormBtn" hidden>Create an engager task <span>→</span></button>
+        <button class="action" id="tasksBtn" hidden>View available tasks <span>→</span></button>
+        <button class="action" id="withdrawBtn" hidden>Request withdrawal <span>→</span></button>
+      </div>
+      <div id="actionArea" aria-live="polite"></div>
+      <p id="dashboardMessage" class="message" role="status"></p>
+    </article>
+    <aside class="panel dashboard-side profile-card">
+      <span class="eyebrow">ACCOUNT DETAILS</span>
+      <h2>Profile</h2>
+      <dl class="profile-details">
+        <div><dt>Username</dt><dd id="profileUsername">—</dd></div>
+        <div><dt>Roles</dt><dd id="profileRoles">—</dd></div>
+        <div><dt>Referral code</dt><dd id="profileReferral">—</dd></div>
+      </dl>
+      <div class="notice">Wallet balance · Payments are processed here.</div>
+    </aside>
+  </section>
+</main>
+<footer><div class="brand"><span class="brand-mark">M✦</span><span>MIGSTAR <b>ENGAGER</b><small>Built for discovery and participation</small></span></div><p>Use only campaigns and tasks permitted by each platform’s rules.</p></footer>
+<script src="dashboard.js"></script>
+</body>
+</html>

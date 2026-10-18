@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MIGSTAR ENGAGER</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="topbar">
+  <a class="brand" href="#"><span class="brand-mark">M✦</span><span>MIGSTAR <b>ENGAGER</b><small>Creators · Campaigns · Tasks</small></span></a>
+  <nav><a href="company-profile.html">Company profile</a><a href="#overview">How it works</a><a href="#levels">Levels</a><a href="#account">Account</a></nav>
+</header>
+<main>
+  <section class="hero">
+    <div class="hero-copy">
+      <span class="eyebrow">YOUR CONTENT. YOUR COMMUNITY.</span>
+      <h1>Turn discovery into <em>meaningful engagement.</em></h1>
+      <p>One account for creating campaigns and completing eligible tasks. Campaigns and payment requests go through a review process.</p>
+      <div class="hero-actions"><a class="button" id="getStartedCta" href="#account">Get started</a><a class="button secondary" id="signInCta" href="#account">Sign in</a></div>
+      <div class="notice">Thank you for choosing MIGSTAR ENGAGER · We love you · We cherish you.</div>
+    </div>
+    <div class="hero-card"><div class="orb">✦</div><span class="eyebrow">PLATFORM SNAPSHOT</span><div class="stats"><div><strong>2</strong><span>Account roles</span></div><div><strong id="levelCount">—</strong><span>Active levels</span></div></div><p>Join as a creator, an engager, or both. Sign in to browse campaigns and use your workspace.</p></div>
+  </section>
+  <section id="overview" class="section">
+    <div class="section-head"><div><span class="eyebrow">ABOUT MIGSTAR ENGAGER</span><h2>A shared space for creators and engagers</h2></div><p>MIGSTAR ENGAGER connects creators who want to promote content with people interested in participating in eligible campaigns. One account can include both roles.</p></div>
+    <div class="feature-grid">
+      <article class="feature"><span>01</span><h3>Create</h3><p>Submit a public HTTPS campaign URL. Metadata is fetched when available, without downloading the video.</p></article>
+      <article class="feature"><span>02</span><h3>Review</h3><p>Campaign content, objectives, budget and compliance are checked before a campaign becomes available.</p></article>
+      <article class="feature"><span>03</span><h3>Complete</h3><p>Claim eligible tasks, open the original content, wait for the timer and submit the requested answer.</p></article>
+    </div>
+  </section>
+  <section id="levels" class="section">
+    <div class="section-head"><div><span class="eyebrow">ADMIN-CONFIGURED</span><h2>Engager levels</h2></div><p>Figures below are demonstration values. A superuser manages these levels.</p></div>
+    <div id="levelList" class="level-grid"><p class="muted">Loading levels…</p></div>
+  </section>
+  <section id="account" class="section tinted">
+    <div class="section-head"><div><span class="eyebrow">YOUR WORKSPACE</span><h2>Account & actions</h2></div><p>Register or sign in to access your creator and engager tools.</p></div>
+    <div class="account-grid auth-grid">
+      <article class="panel">
+        <div class="tabs"><button class="tab active" data-tab="register">Register</button><button class="tab" data-tab="login">Sign in</button></div>
+        <form id="registerForm" class="form">
+          <label>Username<input name="username" required minlength="3"></label>
+          <label>Email<input name="email" type="email"></label>
+          <label>Phone number<input name="phone" placeholder="07xx xxx xxx" required></label>
+          <label>Safaricom/M-Pesa number<input name="mpesa_number" placeholder="2547xx xxx xxx" required></label>
+          <label>Password<input name="password" type="password" required minlength="8"></label>
+          <label>Referral code (optional)<input name="referral_code_input"></label>
+          <fieldset><legend>Choose your roles</legend><label class="check"><input type="checkbox" name="roles" value="CREATOR"> Creator</label><label class="check"><input type="checkbox" name="roles" value="ENGAGER"> Engager</label></fieldset>
+          <p id="activationFeeNote" class="muted">Creator activation fee: loading admin-configured fee and free campaign trials…</p>
+          <button class="button" type="submit">Create account</button>
+        </form>
+        <form id="loginForm" class="form" hidden>
+          <label>Username<input name="username" required></label><label>Password<input name="password" type="password" required></label>
+          <button class="button" type="submit">Sign in</button>
+          <p class="muted register-first-note">Not registered yet? Create an account before signing in.</p>
+          <button class="outline" id="registerFirstBtn" type="button">Register first</button>
+        </form>
+        <p id="authMessage" class="message" role="status"></p>
+      </article>
+    </div>
+  </section>
+</main>
+<footer><div class="brand"><span class="brand-mark">M✦</span><span>MIGSTAR <b>ENGAGER</b><small>Built for discovery and participation</small></span></div><p>Use only campaigns and tasks permitted by each platform’s rules. Timers and answers are not proof of genuine views or engagement.</p></footer>
+<script src="app.js"></script>
+</body>
+</html>
