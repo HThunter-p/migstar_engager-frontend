@@ -449,7 +449,8 @@ $("#campaignFormBtn").addEventListener("click", () => {
         }),
       });
       await refreshUser();
-      $("#actionArea").innerHTML = `<p class="message">Task submitted for review. Status: ${esc(campaign.status)}. Approval is required before it becomes available.</p>`;
+      const metadataNote = campaign.admin_note ? ` ${esc(campaign.admin_note)}` : "";
+      $("#actionArea").innerHTML = `<p class="message">Task submitted for review. Status: ${esc(campaign.status)}. Approval is required before it becomes available.${metadataNote}</p>`;
       renderCampaigns(await api("/campaigns/"));
     } catch (error) { showMessage(error.message); }
   };
