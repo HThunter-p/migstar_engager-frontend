@@ -153,14 +153,18 @@ function renderCampaigns(data) {
     const owned = currentUser && campaign.creator === currentUser.id;
     const expires = campaign.subscription_until ? new Date(campaign.subscription_until) : null;
     const subscriptionLive = expires && expires > new Date();
-    const paymentPending = paymentRequests.some((payment) =>
+    const campaignPayments = paymentRequests.filter((payment) => payment.campaign === campaign.id);
+    const paymentPending = campaignPayments.some((payment) =>
       payment.campaign === campaign.id && ["PENDING", "AWAITING_PAYMENT", "UNDER_REVIEW"].includes(payment.status)
     );
+    const paymentRejected = campaignPayments.some((payment) => payment.status === "REJECTED");
     const subscriptionMessage = campaign.budget_package
       ? `${owned ? `${campaign.is_free_trial ? "Free trial package" : `Your package: ${esc(campaign.target_quantity)} units · ${money(campaign.budget)}`} · ` : `${esc(campaign.target_quantity)} units/package · `}Subscription ${subscriptionLive ? `active until ${esc(expires.toLocaleString())}` : "expired or not activated"} · ${esc(campaign.subscription_days)} days per renewal${paymentPending ? " · Payment request pending" : ""}`
       : "";
-    const renewButton = owned && campaign.budget_package && campaign.status === "APPROVED" && !subscriptionLive && !paymentPending
-      ? `<button class="button" data-subscribe-campaign="${campaign.id}" data-amount="${esc(campaign.budget)}">Subscribe / renew · ${money(campaign.budget)}</button>`
+    const canRequestCampaignPayment = owned && campaign.budget_package && !subscriptionLive && !paymentPending
+      && (campaign.status === "APPROVED" || (campaign.status === "PENDING" && !campaign.is_free_trial));
+    const renewButton = canRequestCampaignPayment
+      ? `<button class="button" data-subscribe-campaign="${campaign.id}" data-amount="${esc(campaign.budget)}">${campaign.status === "PENDING" ? paymentRejected ? "Retry campaign payment" : "Request campaign payment" : "Subscribe / renew"} · ${money(campaign.budget)}</button>`
       : "";
     const canUseWallet = currentUser && (currentUser.roles || []).includes("CREATOR") && (currentUser.roles || []).includes("ENGAGER");
     const walletBalance = Number(currentUser && currentUser.demo_balance || 0);
@@ -246,7 +250,7 @@ function showPaymentRequests() {
       : payment.status === "APPROVED" ? "Payment approved."
       : payment.status === "REJECTED" ? `Request rejected. ${esc(payment.admin_note || "You may submit a new request if needed.")}`
       : "";
-    return `<article class="inline-form"><b>${esc(payment.request_type)} · ${money(payment.amount)}</b>
+    return `<article class="inline-form"><b>${esc(payment.request_type)}${payment.campaign ? ` · Campaign #${esc(payment.campaign)}` : ""} · ${money(payment.amount)}</b>
       <span class="pill">${esc(payment.status)}</span>${requestDetails}
       <p class="muted">${statusMessage}</p>${evidenceForm}</article>`;
   }).join("");
@@ -399,7 +403,7 @@ $("#levelPaymentBtn").addEventListener("click", () => {
 $("#campaignFormBtn").addEventListener("click", () => {
   const freeTrial = Number(currentUser.free_campaigns_remaining || 0) > 0;
   const freeCampaignSlots = Number(currentUser.free_campaign_slots || 0);
-  actionForm(`<b>Create an engager task</b><p class="muted">${freeTrial ? "This task uses one of your free campaign trials. The selected package fee is waived." : "Your free campaign trials are used. The selected package fee is due after task approval."}</p><label>Platform<select id="cPlatform"><option value="YOUTUBE">YouTube</option><option value="FACEBOOK">Facebook</option><option value="INSTAGRAM">Instagram</option><option value="TIKTOK">TikTok</option></select></label><label>Content type<select id="cContentType"></select></label><label>Objective<select id="cObjective"><option value="VIEWERS">Views</option><option value="FOLLOWERS">Followers</option><option value="LIKES">Likes</option><option value="COMMENTS">Comments</option><option value="SUBSCRIBERS">Subscribers</option><option value="WEBSITE_VISITS">Website visits</option><option value="SURVEY">Survey/feedback</option><option value="QUIZ">Educational quiz</option><option value="REFERRALS">Legitimate referrals</option></select></label><label>Campaign package<select id="cBudgetPackage" required></select></label><label>Public HTTPS content URL<input id="cUrl" type="url" required placeholder="https://..."></label><label id="videoDurationField" hidden>Video duration in seconds (only needed if it cannot be detected)<input id="cMediaSeconds" type="number" min="1" step="1"></label><label>Profile URL (if relevant)<input id="cProfile" type="url"></label><label>Description / instructions<textarea id="cDesc"></textarea></label><button class="button" id="sendCampaign">Submit task for review</button><small class="muted">Profile, post, and channel tasks take 20 seconds. Reels, videos, Shorts, and challenges use the full video duration. Tasks are reviewed before becoming available. Your first ${freeCampaignSlots} packages are free after activation; subsequent packages require payment after approval.</small>`);
+  actionForm(`<b>Create an engager task</b><p class="muted">${freeTrial ? "This task uses one of your free campaign trials. The selected package fee is waived." : "After your free trials, a payment request is created when you submit. The campaign can be approved only after payment is verified."}</p><label>Platform<select id="cPlatform"><option value="YOUTUBE">YouTube</option><option value="FACEBOOK">Facebook</option><option value="INSTAGRAM">Instagram</option><option value="TIKTOK">TikTok</option></select></label><label>Content type<select id="cContentType"></select></label><label>Objective<select id="cObjective"><option value="VIEWERS">Views</option><option value="FOLLOWERS">Followers</option><option value="LIKES">Likes</option><option value="COMMENTS">Comments</option><option value="SUBSCRIBERS">Subscribers</option><option value="WEBSITE_VISITS">Website visits</option><option value="SURVEY">Survey/feedback</option><option value="QUIZ">Educational quiz</option><option value="REFERRALS">Legitimate referrals</option></select></label><label>Campaign package<select id="cBudgetPackage" required></select></label><label>Public HTTPS content URL<input id="cUrl" type="url" required placeholder="https://..."></label><label id="videoDurationField" hidden>Video duration in seconds (only needed if it cannot be detected)<input id="cMediaSeconds" type="number" min="1" step="1"></label><label>Profile URL (if relevant)<input id="cProfile" type="url"></label><label>Description / instructions<textarea id="cDesc"></textarea></label><button class="button" id="sendCampaign">Submit task for review</button><small class="muted">Profile, post, and channel tasks take 20 seconds. Reels, videos, Shorts, and challenges use the full video duration. Tasks are reviewed before becoming available. Your first ${freeCampaignSlots} packages are free after activation; after those trials, payment must be verified before a campaign can be approved.</small>`);
   const contentTypes = {
     YOUTUBE: [["CHANNEL", "Channel"], ["VIDEO", "Video"], ["SHORT", "Short"]],
     FACEBOOK: [["PROFILE", "Profile"], ["POST", "Post"], ["REEL", "Reel"]],
@@ -449,8 +453,14 @@ $("#campaignFormBtn").addEventListener("click", () => {
         }),
       });
       await refreshUser();
-      const metadataNote = campaign.admin_note ? ` ${esc(campaign.admin_note)}` : "";
-      $("#actionArea").innerHTML = `<p class="message">Task submitted for review. Status: ${esc(campaign.status)}. Approval is required before it becomes available.${metadataNote}</p>`;
+      if (!campaign.is_free_trial) {
+        await loadPaymentRequests();
+        showPaymentRequests();
+        showMessage("Campaign submitted for review. Complete the payment request; the campaign cannot be approved until payment is verified.");
+      } else {
+        const metadataNote = campaign.admin_note ? ` ${esc(campaign.admin_note)}` : "";
+        $("#actionArea").innerHTML = `<p class="message">Task submitted for review. Status: ${esc(campaign.status)}. Approval is required before it becomes available.${metadataNote}</p>`;
+      }
       renderCampaigns(await api("/campaigns/"));
     } catch (error) { showMessage(error.message); }
   };

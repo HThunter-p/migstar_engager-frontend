@@ -197,7 +197,7 @@ function renderCampaigns(items) {
       title: esc(item.title || "Untitled campaign"),
       detail: `${esc(item.creator_username)} · ${esc(item.platform)} ${esc(item.content_type)} · ${esc(item.objective)}`,
       status: item.status,
-      content: `<p class="muted">${item.is_free_trial ? "Free trial task · package fee waived" : `Package: ${esc(item.budget)}`}${item.media_seconds ? ` · Video duration: ${esc(item.media_seconds)}s` : ""} · ${url ? `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">Open content link ↗</a>` : "No valid content link"}</p>`,
+      content: `<p class="muted">${item.is_free_trial ? "Free trial task · package fee waived" : `Package: ${esc(item.budget)} · Payment: ${esc(item.payment_status || "not submitted")}`}${item.media_seconds ? ` · Video duration: ${esc(item.media_seconds)}s` : ""} · ${url ? `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">Open content link ↗</a>` : "No valid content link"}</p>`,
       note: item.admin_note,
     });
   }).join("") : `<p class="queue-empty">${queues.campaigns.empty}</p>`;
@@ -578,6 +578,7 @@ $("adminDashboard").addEventListener("click", async (event) => {
       }),
     });
     if (await refreshQueue(kind, false)) {
+      if (kind === "payments") await refreshQueue("campaigns", false);
       if (kind === "campaigns") await loadManagedCampaigns();
       setAdminStatus(`${kind} #${button.dataset.id} status: ${result.status}.`);
     }
