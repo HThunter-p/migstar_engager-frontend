@@ -1,4 +1,4 @@
-const API = "http://127.0.0.1:8000/api";
+const API = "https://migstar-engager-api.onrender.com/api";
 const accessToken = localStorage.getItem("me_access") || "";
 const $ = (s) => document.querySelector(s);
 function headers(json=true){const h={};if(json)h["Content-Type"]="application/json";return h}

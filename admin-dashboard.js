@@ -1,4 +1,4 @@
-const API = "http://127.0.0.1:8000/api";
+const API = "https://migstar-engager-api.onrender.com/api";
 let accessToken = localStorage.getItem("me_access") || "";
 let isSuperuser = false;
 let configuredPaymentInstructions = "";
